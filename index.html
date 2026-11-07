@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORKI Shell Shockers Esports Hub v2.5</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            base: '#080911',
+                            card: 'rgba(15, 17, 28, 0.75)',
+                            cardHover: 'rgba(23, 27, 44, 0.85)',
+                            border: 'rgba(255, 255, 255, 0.1)',
+                            accent: '#00f2fe',
+                            purple: '#7b2cbf',
+                            neonPurple: '#a855f7',
+                            gold: '#ffd700',
+                            pink: '#ff007f',
+                            green: '#00e676'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(0, 242, 254, 0.35)',
+                        'neon-purple': '0 0 20px rgba(168, 85, 247, 0.35)',
+                        'neon-pink': '0 0 20px rgba(255, 0, 127, 0.35)',
+                        'neon-gold': '0 0 20px rgba(255, 215, 0, 0.35)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.5)'
+                    },
+                    backgroundImage: {
+                        'cyber-grid': "radial-gradient(circle at 50% 50%, rgba(123, 44, 191, 0.15) 0%, transparent 60%), linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080911;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2438;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f2fe;
+        }
+
+        /* Cyberpunk Liquid Glass Panels */
+        .glass-panel {
+            background: rgba(14, 17, 29, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-panel:hover {
+            border-color: rgba(0, 242, 254, 0.25);
+        }
+
+        .glass-header {
+            background: rgba(8, 9, 17, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Neon Glow Text Animation */
+        .glow-text-cyan {
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+        }
+        .glow-text-pink {
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
+        }
+
+        /* Animated Grid Background */
+        .bg-grid-animated {
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 0 0, 40px 40px, 40px 40px; }
+        }
+
+        /* Crosshair Container Base Styles */
+        .crosshair-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            pointer-events: none;
+            transition: transform 0.05s ease-out;
+        }
+        .crosshair-container.recoil-active {
+            transform: scale(1.35) !important;
+        }
+
+        /* Fullscreen styles override */
+        :fullscreen #gameContainer {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            border-radius: 0 !important;
+        }
+
+        /* Pulse Dot Animation */
+        .live-dot {
+            box-shadow: 0 0 8px #00e676;
+            animation: pulseDot 2s infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+    </style>
+</head>
+<body class="bg-cyber-base bg-cyber-grid bg-grid-animated text-gray-200 min-h-screen flex flex-col overflow-x-hidden selection:bg-cyber-accent selection:text-black">
+
+    <!-- TOP ESPORTS HEADER -->
+    <header id="mainHeader" class="sticky top-0 z-40 glass-header w-full px-4 lg:px-8 py-3 flex items-center justify-between transition-all duration-300">
+        <!-- Brand / Logo -->
+        <div class="flex items-center space-x-4">
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-cyber-purple via-cyber-accent to-cyber-pink p-0.5 shadow-neon-cyan group-hover:scale-105 transition-transform duration-300">
+                    <div class="w-full h-full bg-cyber-base rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-crosshairs text-cyber-accent text-xl font-black group-hover:rotate-90 transition-transform duration-500"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-orbitron font-extrabold text-xl tracking-wider text-white flex items-center gap-1.5">
+                            SCORKI <span class="text-cyber-accent glow-text-cyan">HUB</span>
+                        </span>
+                        <span class="text-[10px] bg-gradient-to-r from-cyber-purple to-cyber-pink text-white font-orbitron font-bold px-2 py-0.5 rounded-full shadow-neon-purple">
+                            PRO v2.5
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 font-mono hidden sm:block">Shell Shockers Esports Operating Portal</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Middle Telemetry Status Bar -->
+        <div class="hidden md:flex items-center space-x-4 bg-cyber-card border border-cyber-border px-4 py-1.5 rounded-2xl text-xs font-mono">
+            <!-- Server Region -->
+            <div class="flex items-center space-x-1.5 text-gray-300">
+                <span class="w-2 h-2 rounded-full bg-cyber-green live-dot"></span>
+                <span class="text-gray-400">SERVER:</span>
+                <span class="text-white font-bold">TW-NORTH / ASIA</span>
+            </div>
+            <span class="text-gray-700">|</span>
+            <!-- FPS Badge -->
+            <div class="flex items-center space-x-1 text-cyber-green font-bold">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span id="headerFps">60</span> FPS
+            </div>
+            <span class="text-gray-700">|</span>
+            <!-- Ping Badge -->
+            <div class="flex items-center space-x-1 text-cyber-accent font-bold">
+                <i class="fa-solid fa-signal"></i>
+                <span id="headerPing">16</span> ms
+            </div>
+            <span class="text-gray-700">|</span>
+            <!-- Live Clock -->
+            <div class="flex items-center space-x-1.5 text-gray-300">
+                <i class="fa-regular fa-clock text-cyber-gold"></i>
+                <span id="liveClock" class="font-bold text-white">00:00:00</span>
+            </div>
+        </div>
+
+        <!-- Right Quick Controls -->
+        <div class="flex items-center space-x-3">
+            <!-- Ambient Audio Synth Toggle -->
+            <button id="synthSoundBtn" title="Toggle Focus Synth Ambient Audio" 
+                    class="p-2.5 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 hover:text-cyber-accent hover:border-cyber-accent/50 transition-all duration-200">
+                <i class="fa-solid fa-music text-sm"></i>
+            </button>
+
+            <!-- Bookmark Button -->
+            <button id="favGameBtn" title="Bookmark Scorki Portal" 
+                    class="p-2.5 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 hover:text-cyber-gold hover:border-cyber-gold/50 transition-all duration-200">
+                <i class="fa-regular fa-star text-sm"></i>
+            </button>
+
+            <!-- Layout Mode Selector -->
+            <div class="bg-cyber-card border border-cyber-border p-1 rounded-xl flex items-center space-x-1">
+                <button id="layoutDefaultBtn" class="px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-cyber-purple to-cyber-accent text-white font-orbitron font-bold transition-all shadow-neon-cyan">
+                    <i class="fa-solid fa-table-cells-large mr-1"></i> Default
+                </button>
+                <button id="layoutTheaterBtn" class="px-3 py-1 text-xs rounded-lg text-gray-400 hover:text-white font-orbitron transition-all">
+                    <i class="fa-solid fa-tv mr-1"></i> Theater
+                </button>
+            </div>
+
+            <!-- User Avatar & Status -->
+            <div class="flex items-center space-x-2 pl-2 border-l border-cyber-border">
+                <div class="relative">
+                    <img src="https://placehold.co/80x80/00f2fe/000000?text=SCORKI" alt="User Avatar" class="w-9 h-9 rounded-xl border border-cyber-accent object-cover">
+                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-cyber-green rounded-full border-2 border-cyber-base"></span>
+                </div>
+                <div class="hidden xl:block text-left">
+                    <div class="text-xs font-bold text-white font-orbitron flex items-center gap-1">
+                        ScorkiPRO <i class="fa-solid fa-shield-halved text-cyber-accent text-[10px]"></i>
+                    </div>
+                    <div class="text-[10px] font-mono text-cyber-gold">RANK #1 • VIP PRO</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN HUB CONTAINER -->
+    <main class="flex-1 max-w-[1800px] w-full mx-auto px-4 lg:px-6 py-5 flex flex-col gap-6">
+
+        <!-- SYSTEM ANNOUNCEMENT BANNER -->
+        <div id="noticeBanner" class="glass-panel border-l-4 border-l-cyber-accent p-4 rounded-2xl flex items-center justify-between text-xs sm:text-sm text-gray-300">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-8 h-8 rounded-xl bg-cyber-accent/15 text-cyber-accent flex items-center justify-center font-black">
+                    <i class="fa-solid fa-bolt-lightning text-sm"></i>
+                </div>
+                <div>
+                    <span class="font-orbitron font-bold text-white tracking-wider">SCORKI ENGINE 2.5 ONLINE:</span>
+                    <span>Crosshair Overlay Lab, Realtime Telemetry, Dynamic Recoil Pulse & Custom Loadout Notes ready.</span>
+                </div>
+            </div>
+            <button onclick="document.getElementById('noticeBanner').remove()" class="text-gray-400 hover:text-white p-1 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- MAIN LAYOUT GRID -->
+        <div id="layoutGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 transition-all duration-300">
+
+            <!-- LEFT / GAME VIEWPORT CONTAINER -->
+            <div id="gameSection" class="lg:col-span-8 flex flex-col gap-4 transition-all duration-300">
+
+                <!-- MAIN STAGE / GAME CANVAS -->
+                <div id="gameContainer" class="relative w-full aspect-video bg-black rounded-3xl overflow-hidden border border-cyber-border shadow-2xl group transition-all duration-300">
+                    
+                    <!-- GAME IFRAME -->
+                    <iframe id="gameIframe" 
+                            src="https://shellshock.io/" 
+                            title="Shell Shockers Game"
+                            class="w-full h-full border-0" 
+                            allow="autoplay; keyboard-open; fullscreen; microphone; camera; focus-without-user-activation"
+                            allowfullscreen>
+                    </iframe>
+
+                    <!-- CROSSHAIR OVERLAY LAYER -->
+                    <div id="crosshairOverlay" class="pointer-events-none absolute inset-0 flex items-center justify-center z-20">
+                        <div id="crosshairGraphic" class="crosshair-container"></div>
+                    </div>
+
+                    <!-- TELEMETRY HUD OVERLAY -->
+                    <div class="absolute top-4 left-4 z-20 flex items-center space-x-3 bg-cyber-base/80 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/10 text-xs font-mono shadow-2xl">
+                        <div class="flex items-center space-x-1.5 text-cyber-green font-bold">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            <span id="canvasFps">60</span> FPS
+                        </div>
+                        <span class="text-gray-600">|</span>
+                        <div class="flex items-center space-x-1.5 text-cyber-accent font-bold">
+                            <i class="fa-solid fa-signal"></i>
+                            <span id="canvasPing">16</span> ms
+                        </div>
+                        <span class="text-gray-600">|</span>
+                        <div class="flex items-center space-x-1.5 text-cyber-gold font-bold">
+                            <i class="fa-solid fa-microchip"></i>
+                            <span>16.6 ms</span>
+                        </div>
+                    </div>
+
+                    <!-- QUICK CANVAS CONTROL DOCK -->
+                    <div class="absolute top-4 right-4 z-20 flex items-center space-x-2">
+                        <button id="muteBtn" class="p-2.5 rounded-xl bg-cyber-base/80 hover:bg-cyber-accent hover:text-black text-white border border-white/10 backdrop-blur-md transition-all shadow-lg" title="Mute Audio Simulation">
+                            <i class="fa-solid fa-volume-high text-sm"></i>
+                        </button>
+                        <button id="reloadGameBtn" class="p-2.5 rounded-xl bg-cyber-base/80 hover:bg-cyber-accent hover:text-black text-white border border-white/10 backdrop-blur-md transition-all shadow-lg" title="Reload Game Canvas">
+                            <i class="fa-solid fa-rotate-right text-sm"></i>
+                        </button>
+                        <button id="focusModeBtn" class="p-2.5 rounded-xl bg-cyber-base/80 hover:bg-cyber-accent hover:text-black text-white border border-white/10 backdrop-blur-md transition-all shadow-lg" title="Toggle Focus Mode">
+                            <i class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                        <button id="fullscreenBtn" class="p-2.5 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-accent hover:brightness-125 text-white shadow-neon-cyan border border-cyber-accent/40 backdrop-blur-md transition-all" title="Toggle Fullscreen">
+                            <i class="fa-solid fa-expand text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- SCREENSHOT FLASH LAYER -->
+                    <div id="screenshotFlash" class="pointer-events-none absolute inset-0 bg-white opacity-0 z-30 transition-opacity duration-300"></div>
+
+                    <!-- REFRESH LOADER -->
+                    <div id="gameLoader" class="hidden absolute inset-0 bg-cyber-base flex flex-col items-center justify-center z-30">
+                        <div class="w-14 h-14 border-4 border-cyber-accent/20 border-t-cyber-accent rounded-full animate-spin"></div>
+                        <p class="mt-4 text-sm font-orbitron font-bold text-cyber-accent tracking-widest">LOADING SCORKI ENGINE BATTLEFIELD...</p>
+                    </div>
+                </div>
+
+                <!-- GAME QUICK CONTROL STRIP -->
+                <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 text-cyber-accent font-orbitron font-extrabold tracking-wider">
+                            <i class="fa-solid fa-egg text-cyber-gold text-lg animate-bounce"></i>
+                            <span class="text-white">Shell Shockers</span>
+                            <span class="text-xs text-cyber-accent bg-cyber-accent/10 px-2.5 py-0.5 rounded-full border border-cyber-accent/30">Scorki Web Edition</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button id="takeScreenshotBtn" class="px-3.5 py-2 rounded-xl bg-cyber-card hover:bg-cyber-cardHover border border-cyber-border text-gray-300 hover:text-white transition-all flex items-center space-x-2 text-xs font-semibold">
+                            <i class="fa-solid fa-camera text-cyber-accent"></i>
+                            <span>Snapshot</span>
+                        </button>
+                        <button id="shareBtn" class="px-3.5 py-2 rounded-xl bg-cyber-card hover:bg-cyber-cardHover border border-cyber-border text-gray-300 hover:text-white transition-all flex items-center space-x-2 text-xs font-semibold">
+                            <i class="fa-solid fa-share-nodes text-cyber-pink"></i>
+                            <span>Share Portal</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TABBED CONTROL & LAB DOCK -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col gap-6">
+                    <!-- Tab Navigation -->
+                    <div class="flex border-b border-cyber-border space-x-6 text-sm font-orbitron font-semibold text-gray-400 overflow-x-auto">
+                        <button class="tab-btn active text-cyber-accent border-b-2 border-cyber-accent pb-3 flex items-center gap-2 transition-all" data-tab="tab-crosshair">
+                            <i class="fa-solid fa-crosshairs"></i> Crosshair Lab (準心實驗室)
+                        </button>
+                        <button class="tab-btn hover:text-white pb-3 flex items-center gap-2 transition-all" data-tab="tab-arsenal">
+                            <i class="fa-solid fa-gun"></i> Tactical Arsenal (裝備庫)
+                        </button>
+                        <button class="tab-btn hover:text-white pb-3 flex items-center gap-2 transition-all" data-tab="tab-controls">
+                            <i class="fa-solid fa-keyboard"></i> Keybindings (按鍵)
+                        </button>
+                        <button class="tab-btn hover:text-white pb-3 flex items-center gap-2 transition-all" data-tab="tab-tips">
+                            <i class="fa-solid fa-trophy"></i> Pro Tips (競賽指南)
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: CROSSHAIR LAB -->
+                    <div id="tab-crosshair" class="tab-content grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <!-- Preview Window -->
+                        <div class="md:col-span-5 flex flex-col gap-3">
+                            <label class="text-xs font-orbitron font-bold text-gray-300 flex items-center justify-between">
+                                <span>LIVE TARGET PREVIEW</span>
+                                <span class="text-cyber-accent text-[10px]">REAL-TIME RENDERING</span>
+                            </label>
+                            <div id="labPreviewBox" class="w-full h-48 bg-black rounded-2xl relative flex items-center justify-center border border-cyber-border overflow-hidden group cursor-pointer shadow-inner">
+                                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#00f2fe_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                                <div id="modalCrosshairPreview" class="crosshair-container z-10"></div>
+                                <span class="absolute bottom-2 right-3 text-[10px] font-mono text-gray-500 group-hover:text-cyber-accent transition-colors">Click Target for Recoil Test</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-400 px-1">
+                                <span>Pulse on Fire:</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="recoilToggle" class="sr-only peer" checked>
+                                    <div class="w-9 h-5 bg-cyber-card peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyber-accent"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="md:col-span-7 flex flex-col gap-4 text-xs">
+                            <!-- Preset Selection -->
+                            <div>
+                                <label class="text-xs font-semibold text-gray-300 block mb-2">Preset Styles</label>
+                                <div class="grid grid-cols-5 gap-2">
+                                    <button class="ch-preset p-2 rounded-xl bg-cyber-card border border-cyber-accent text-white font-mono" data-style="dot">Dot</button>
+                                    <button class="ch-preset p-2 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 font-mono" data-style="cross">Cross</button>
+                                    <button class="ch-preset p-2 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 font-mono" data-style="gap">Gap</button>
+                                    <button class="ch-preset p-2 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 font-mono" data-style="circle">Circle</button>
+                                    <button class="ch-preset p-2 rounded-xl bg-cyber-card border border-cyber-border text-gray-400 font-mono" data-style="box">Box</button>
+                                </div>
+                            </div>
+
+                            <!-- Color Palette -->
+                            <div>
+                                <label class="text-xs font-semibold text-gray-300 block mb-2">Crosshair Color</label>
+                                <div class="flex items-center space-x-3">
+                                    <button class="ch-color w-7 h-7 rounded-full bg-[#00e676] ring-2 ring-white" data-color="#00e676"></button>
+                                    <button class="ch-color w-7 h-7 rounded-full bg-[#00f2fe]" data-color="#00f2fe"></button>
+                                    <button class="ch-color w-7 h-7 rounded-full bg-[#ff007f]" data-color="#ff007f"></button>
+                                    <button class="ch-color w-7 h-7 rounded-full bg-[#ffd700]" data-color="#ffd700"></button>
+                                    <button class="ch-color w-7 h-7 rounded-full bg-[#ffffff]" data-color="#ffffff"></button>
+                                    <div class="flex items-center space-x-2 pl-2 border-l border-cyber-border">
+                                        <span class="text-gray-400">Custom:</span>
+                                        <input type="color" id="chCustomColor" value="#00e676" class="w-7 h-7 rounded-lg bg-transparent cursor-pointer border-0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sliders Grid -->
+                            <div class="grid grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <div class="flex justify-between text-gray-300 mb-1">
+                                        <span>Size / Length</span>
+                                        <span id="chSizeVal" class="font-mono text-cyber-accent">8px</span>
+                                    </div>
+                                    <input type="range" id="chSizeSlider" min="2" max="24" value="8" class="w-full accent-cyber-accent">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-gray-300 mb-1">
+                                        <span>Thickness</span>
+                                        <span id="chThicknessVal" class="font-mono text-cyber-accent">2px</span>
+                                    </div>
+                                    <input type="range" id="chThicknessSlider" min="1" max="6" value="2" class="w-full accent-cyber-accent">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-gray-300 mb-1">
+                                        <span>Center Gap</span>
+                                        <span id="chGapVal" class="font-mono text-cyber-accent">3px</span>
+                                    </div>
+                                    <input type="range" id="chGapSlider" min="0" max="12" value="3" class="w-full accent-cyber-accent">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-gray-300 mb-1">
+                                        <span>Opacity</span>
+                                        <span id="chOpacityVal" class="font-mono text-cyber-accent">100%</span>
+                                    </div>
+                                    <input type="range" id="chOpacitySlider" min="20" max="100" value="100" class="w-full accent-cyber-accent">
+                                </div>
+                            </div>
+
+                            <button id="applyCrosshairBtn" class="w-full py-2.5 mt-2 bg-gradient-to-r from-cyber-purple via-cyber-accent to-cyber-green text-black font-orbitron font-extrabold rounded-xl shadow-neon-cyan hover:brightness-125 transition-all">
+                                SAVE & APPLY CROSSHAIR TO CANVAS
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: TACTICAL ARSENAL -->
+                    <div id="tab-arsenal" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Crackshot -->
+                            <div class="bg-cyber-card border border-cyber-border p-4 rounded-2xl flex flex-col gap-2 hover:border-cyber-accent/50 transition-all">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-orbitron font-bold text-white text-sm">Crackshot</span>
+                                    <span class="text-[10px] bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/30">Sniper</span>
+                                </div>
+                                <div class="space-y-1.5 text-xs text-gray-300">
+                                    <div class="flex justify-between text-[11px]"><span>Damage (Head)</span><span class="text-rose-400 font-bold">100 (1-Hit)</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-rose-500 h-full w-[100%]"></div></div>
+                                    <div class="flex justify-between text-[11px]"><span>Fire Rate</span><span class="text-gray-400">Slow</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-amber-400 h-full w-[25%]"></div></div>
+                                </div>
+                            </div>
+                            <!-- EggK-47 -->
+                            <div class="bg-cyber-card border border-cyber-border p-4 rounded-2xl flex flex-col gap-2 hover:border-cyber-accent/50 transition-all">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-orbitron font-bold text-white text-sm">EggK-47</span>
+                                    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">Assault Rifle</span>
+                                </div>
+                                <div class="space-y-1.5 text-xs text-gray-300">
+                                    <div class="flex justify-between text-[11px]"><span>Damage</span><span class="text-amber-400 font-bold">Balanced</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-amber-400 h-full w-[65%]"></div></div>
+                                    <div class="flex justify-between text-[11px]"><span>Fire Rate</span><span class="text-cyber-green">Fast</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-cyber-green h-full w-[80%]"></div></div>
+                                </div>
+                            </div>
+                            <!-- Scrambler -->
+                            <div class="bg-cyber-card border border-cyber-border p-4 rounded-2xl flex flex-col gap-2 hover:border-cyber-accent/50 transition-all">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-orbitron font-bold text-white text-sm">Scrambler</span>
+                                    <span class="text-[10px] bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/30">Shotgun</span>
+                                </div>
+                                <div class="space-y-1.5 text-xs text-gray-300">
+                                    <div class="flex justify-between text-[11px]"><span>Close Damage</span><span class="text-rose-400 font-bold">Lethal</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-rose-500 h-full w-[95%]"></div></div>
+                                    <div class="flex justify-between text-[11px]"><span>Range</span><span class="text-gray-400">Short</span></div>
+                                    <div class="w-full bg-cyber-base h-1.5 rounded-full overflow-hidden"><div class="bg-amber-400 h-full w-[30%]"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: KEYBINDINGS -->
+                    <div id="tab-controls" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-accent mb-1 border border-cyber-accent/30">WASD</span>
+                                <span class="text-xs text-gray-400">Movement</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-pink mb-1 border border-cyber-pink/30">Left Click</span>
+                                <span class="text-xs text-gray-400">Fire Primary</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-accent mb-1 border border-cyber-accent/30">Shift / E</span>
+                                <span class="text-xs text-gray-400">Aim Scope</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-gold mb-1 border border-cyber-gold/30">R</span>
+                                <span class="text-xs text-gray-400">Reload Ammo</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-green mb-1 border border-cyber-green/30">Space</span>
+                                <span class="text-xs text-gray-400">Jump / Bunnyhop</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-accent mb-1 border border-cyber-accent/30">Q</span>
+                                <span class="text-xs text-gray-400">Grenade</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-pink mb-1 border border-cyber-pink/30">F</span>
+                                <span class="text-xs text-gray-400">Melee Attack</span>
+                            </div>
+                            <div class="bg-cyber-card p-3 rounded-xl border border-cyber-border flex flex-col items-center">
+                                <span class="bg-cyber-base px-3 py-1 rounded-lg font-mono font-bold text-cyber-gold mb-1 border border-cyber-gold/30">1 - 2</span>
+                                <span class="text-xs text-gray-400">Switch Weapon</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: PRO TIPS -->
+                    <div id="tab-tips" class="tab-content hidden space-y-3 text-sm text-gray-300">
+                        <div class="p-4 rounded-2xl bg-cyber-card border border-cyber-border space-y-2">
+                            <h4 class="font-orbitron font-bold text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb text-cyber-gold"></i> Hop-Shooting & Strafe Advantage
+                            </h4>
+                            <p class="text-xs leading-relaxed text-gray-400">
+                                In Shell Shockers, jumping reduces your hit surface while keeping momentum. Combine WASD strafing with jump timing to make your egg harder to hit.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-cyber-card border border-cyber-border space-y-2">
+                            <h4 class="font-orbitron font-bold text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-crosshairs text-cyber-accent"></i> Quick-Scope Precision
+                            </h4>
+                            <p class="text-xs leading-relaxed text-gray-400">
+                                Using the Crackshot sniper? Tap Shift right before firing to stabilize accuracy instantly without staying zoomed in.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDEBAR / PRO CONFIG & NOTES -->
+            <div id="sidebarSection" class="lg:col-span-4 flex flex-col gap-6 transition-all duration-300">
+                
+                <!-- PRO SENSITIVITY & CONFIG DOCK -->
+                <div class="glass-panel p-5 rounded-3xl flex flex-col gap-4">
+                    <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                        <h3 class="font-orbitron font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-cyber-accent"></i> Scorki Config & Notes
+                        </h3>
+                        <span id="saveStatus" class="text-[11px] font-mono text-cyber-green opacity-0 transition-opacity">SAVED!</span>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-gray-400 mb-1">In-Game Sensitivity</label>
+                                <input type="text" id="noteSens" placeholder="e.g. 2.4" 
+                                       class="w-full bg-cyber-card border border-cyber-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyber-accent font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-1">Mouse DPI</label>
+                                <input type="text" id="noteDpi" placeholder="e.g. 800" 
+                                       class="w-full bg-cyber-card border border-cyber-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyber-accent font-mono">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 mb-1">Calculated eDPI</label>
+                            <div id="edpiVal" class="w-full bg-cyber-base border border-cyber-border rounded-xl px-3 py-2 text-cyber-accent font-mono font-bold">1920 eDPI</div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 mb-1">Primary Weapon Choice</label>
+                            <select id="noteWeapon" class="w-full bg-cyber-card border border-cyber-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyber-accent">
+                                <option value="Crackshot">Crackshot (Sniper Rifle)</option>
+                                <option value="EggK-47">EggK-47 (Assault Rifle)</option>
+                                <option value="Scrambler">Scrambler (Shotgun)</option>
+                                <option value="Free Ranger">Free Ranger (Semi-Auto)</option>
+                                <option value="Tri-Hard">Tri-Hard (Burst Rifle)</option>
+                                <option value="Ruckus">Ruckus (LMG)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 mb-1">Private Room / Tactics Notepad</label>
+                            <textarea id="noteTactics" rows="4" placeholder="Save VIP room codes, clan passwords or match notes..." 
+                                      class="w-full bg-cyber-card border border-cyber-border rounded-xl p-3 text-white focus:outline-none focus:border-cyber-accent resize-none font-mono"></textarea>
+                        </div>
+
+                        <button id="saveNotesBtn" class="w-full py-2.5 bg-gradient-to-r from-cyber-purple to-cyber-accent text-white font-orbitron font-bold rounded-xl shadow-neon-cyan hover:brightness-125 transition-all">
+                            SAVE SCORKI CONFIG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUICK HOTKEY CARD -->
+                <div class="glass-panel p-5 rounded-3xl flex flex-col gap-3">
+                    <h3 class="font-orbitron font-bold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-cyber-gold"></i> Hub Shortcuts
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-cyber-card border border-cyber-border">
+                            <span class="text-gray-300">Toggle Fullscreen</span>
+                            <kbd class="bg-cyber-base px-2 py-0.5 rounded text-cyber-accent font-mono font-bold border border-cyber-accent/30">F11 / Button</kbd>
+                        </div>
+                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-cyber-card border border-cyber-border">
+                            <span class="text-gray-300">Theater View</span>
+                            <kbd class="bg-cyber-base px-2 py-0.5 rounded text-cyber-accent font-mono font-bold border border-cyber-accent/30">Alt + T</kbd>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto border-t border-cyber-border bg-cyber-base/70 py-6 px-4 text-center text-xs text-gray-500">
+        <div class="max-w-[1800px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+            <div>
+                © 2026 SCORKI Esports Operating Hub • Powered by Scorki Web Tech.
+            </div>
+            <div class="flex items-center space-x-4 text-gray-400">
+                <a href="#" class="hover:text-cyber-accent transition-colors">Scorki Network</a>
+                <a href="#" class="hover:text-cyber-accent transition-colors">Status</a>
+                <a href="#" class="hover:text-cyber-accent transition-colors">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 glass-panel border border-cyber-accent/40 text-white px-4 py-3 rounded-2xl flex items-center space-x-3 shadow-2xl">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-cyber-green"></i>
+        <span id="toastMsg" class="text-sm font-semibold">Notification message</span>
+    </div>
+
+    <!-- MAIN APP SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM ELEMENTS ---
+            const gameContainer = document.getElementById('gameContainer');
+            const gameIframe = document.getElementById('gameIframe');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const reloadGameBtn = document.getElementById('reloadGameBtn');
+            const gameLoader = document.getElementById('gameLoader');
+            const muteBtn = document.getElementById('muteBtn');
+            const focusModeBtn = document.getElementById('focusModeBtn');
+            const layoutDefaultBtn = document.getElementById('layoutDefaultBtn');
+            const layoutTheaterBtn = document.getElementById('layoutTheaterBtn');
+            const gameSection = document.getElementById('gameSection');
+            const sidebarSection = document.getElementById('sidebarSection');
+            const mainHeader = document.getElementById('mainHeader');
+            const favGameBtn = document.getElementById('favGameBtn');
+            const liveClock = document.getElementById('liveClock');
+            const synthSoundBtn = document.getElementById('synthSoundBtn');
+
+            // --- LIVE CLOCK ---
+            function updateClock() {
+                const now = new Date();
+                liveClock.textContent = now.toLocaleTimeString();
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // --- FULLSCREEN HANDLER ---
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    if (gameContainer.requestFullscreen) gameContainer.requestFullscreen();
+                    showToast('Entered Scorki Fullscreen');
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+            });
+
+            // --- RELOAD GAME CANVAS ---
+            reloadGameBtn.addEventListener('click', () => {
+                gameLoader.classList.remove('hidden');
+                const currentSrc = gameIframe.src;
+                gameIframe.src = '';
+                setTimeout(() => {
+                    gameIframe.src = currentSrc;
+                    gameLoader.classList.add('hidden');
+                    showToast('Scorki Canvas Reloaded');
+                }, 800);
+            });
+
+            // --- FOCUS MODE ---
+            let isFocusMode = false;
+            focusModeBtn.addEventListener('click', () => {
+                isFocusMode = !isFocusMode;
+                const icon = focusModeBtn.querySelector('i');
+                if (isFocusMode) {
+                    sidebarSection.classList.add('hidden');
+                    mainHeader.classList.add('hidden');
+                    gameSection.classList.remove('lg:col-span-8');
+                    gameSection.classList.add('lg:col-span-12');
+                    icon.className = 'fa-solid fa-eye-slash text-sm text-cyber-accent';
+                    showToast('Focus Mode Active');
+                } else {
+                    sidebarSection.classList.remove('hidden');
+                    mainHeader.classList.remove('hidden');
+                    gameSection.classList.remove('lg:col-span-12');
+                    gameSection.classList.add('lg:col-span-8');
+                    icon.className = 'fa-solid fa-eye text-sm';
+                    showToast('Focus Mode Disabled');
+                }
+            });
+
+            // --- THEATER MODE ---
+            layoutTheaterBtn.addEventListener('click', () => {
+                sidebarSection.classList.add('hidden');
+                gameSection.classList.remove('lg:col-span-8');
+                gameSection.classList.add('lg:col-span-12');
+                layoutTheaterBtn.className = 'px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-cyber-purple to-cyber-accent text-white font-orbitron font-bold transition-all shadow-neon-cyan';
+                layoutDefaultBtn.className = 'px-3 py-1 text-xs rounded-lg text-gray-400 hover:text-white font-orbitron transition-all';
+                showToast('Theater Mode Active');
+            });
+
+            layoutDefaultBtn.addEventListener('click', () => {
+                sidebarSection.classList.remove('hidden');
+                gameSection.classList.remove('lg:col-span-12');
+                gameSection.classList.add('lg:col-span-8');
+                layoutDefaultBtn.className = 'px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-cyber-purple to-cyber-accent text-white font-orbitron font-bold transition-all shadow-neon-cyan';
+                layoutTheaterBtn.className = 'px-3 py-1 text-xs rounded-lg text-gray-400 hover:text-white font-orbitron transition-all';
+                showToast('Default Layout Restored');
+            });
+
+            // --- TAB NAVIGATION ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-tab');
+
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active', 'text-cyber-accent', 'border-b-2', 'border-cyber-accent');
+                        b.classList.add('text-gray-400');
+                    });
+
+                    btn.classList.add('active', 'text-cyber-accent', 'border-b-2', 'border-cyber-accent');
+                    btn.classList.remove('text-gray-400');
+
+                    tabContents.forEach(content => {
+                        if (content.id === targetTab) content.classList.remove('hidden');
+                        else content.classList.add('hidden');
+                    });
+                });
+            });
+
+            // --- TELEMETRY TICKER ---
+            const headerFps = document.getElementById('headerFps');
+            const canvasFps = document.getElementById('canvasFps');
+            const headerPing = document.getElementById('headerPing');
+            const canvasPing = document.getElementById('canvasPing');
+
+            setInterval(() => {
+                const fps = Math.floor(59 + Math.random() * 3);
+                const ping = Math.floor(14 + Math.random() * 6);
+                headerFps.textContent = fps;
+                canvasFps.textContent = fps;
+                headerPing.textContent = ping;
+                canvasPing.textContent = ping;
+            }, 2000);
+
+            // --- ADVANCED CROSSHAIR LAB & OVERLAY ---
+            const crosshairGraphic = document.getElementById('crosshairGraphic');
+            const modalCrosshairPreview = document.getElementById('modalCrosshairPreview');
+            const labPreviewBox = document.getElementById('labPreviewBox');
+            const recoilToggle = document.getElementById('recoilToggle');
+
+            const chSizeSlider = document.getElementById('chSizeSlider');
+            const chSizeVal = document.getElementById('chSizeVal');
+            const chThicknessSlider = document.getElementById('chThicknessSlider');
+            const chThicknessVal = document.getElementById('chThicknessVal');
+            const chGapSlider = document.getElementById('chGapSlider');
+            const chGapVal = document.getElementById('chGapVal');
+            const chOpacitySlider = document.getElementById('chOpacitySlider');
+            const chOpacityVal = document.getElementById('chOpacityVal');
+            const chCustomColor = document.getElementById('chCustomColor');
+            const applyCrosshairBtn = document.getElementById('applyCrosshairBtn');
+
+            let currentStyle = 'dot';
+            let currentColor = '#00e676';
+            let currentSize = 8;
+            let currentThickness = 2;
+            let currentGap = 3;
+            let currentOpacity = 1;
+
+            function renderCrosshair(container) {
+                container.innerHTML = '';
+                container.style.opacity = currentOpacity;
+
+                if (currentStyle === 'dot') {
+                    const dot = document.createElement('div');
+                    dot.style.width = `${currentSize}px`;
+                    dot.style.height = `${currentSize}px`;
+                    dot.style.backgroundColor = currentColor;
+                    dot.style.borderRadius = '50%';
+                    dot.style.boxShadow = `0 0 8px ${currentColor}`;
+                    container.appendChild(dot);
+                } else if (currentStyle === 'cross' || currentStyle === 'gap') {
+                    const gap = currentStyle === 'gap' ? parseInt(currentGap) : 0;
+                    const len = parseInt(currentSize);
+                    const thick = parseInt(currentThickness);
+
+                    // Top
+                    const top = document.createElement('div');
+                    top.style.position = 'absolute';
+                    top.style.width = `${thick}px`;
+                    top.style.height = `${len}px`;
+                    top.style.backgroundColor = currentColor;
+                    top.style.top = `-${len + gap}px`;
+                    top.style.boxShadow = `0 0 6px ${currentColor}`;
+
+                    // Bottom
+                    const bottom = document.createElement('div');
+                    bottom.style.position = 'absolute';
+                    bottom.style.width = `${thick}px`;
+                    bottom.style.height = `${len}px`;
+                    bottom.style.backgroundColor = currentColor;
+                    bottom.style.bottom = `-${len + gap}px`;
+                    bottom.style.boxShadow = `0 0 6px ${currentColor}`;
+
+                    // Left
+                    const left = document.createElement('div');
+                    left.style.position = 'absolute';
+                    left.style.width = `${len}px`;
+                    left.style.height = `${thick}px`;
+                    left.style.backgroundColor = currentColor;
+                    left.style.left = `-${len + gap}px`;
+                    left.style.boxShadow = `0 0 6px ${currentColor}`;
+
+                    // Right
+                    const right = document.createElement('div');
+                    right.style.position = 'absolute';
+                    right.style.width = `${len}px`;
+                    right.style.height = `${thick}px`;
+                    right.style.backgroundColor = currentColor;
+                    right.style.right = `-${len + gap}px`;
+                    right.style.boxShadow = `0 0 6px ${currentColor}`;
+
+                    container.appendChild(top);
+                    container.appendChild(bottom);
+                    container.appendChild(left);
+                    container.appendChild(right);
+                } else if (currentStyle === 'circle') {
+                    const circle = document.createElement('div');
+                    circle.style.width = `${parseInt(currentSize) + 8}px`;
+                    circle.style.height = `${parseInt(currentSize) + 8}px`;
+                    circle.style.border = `${currentThickness}px solid ${currentColor}`;
+                    circle.style.borderRadius = '50%';
+                    circle.style.boxShadow = `0 0 8px ${currentColor}`;
+                    container.appendChild(circle);
+                } else if (currentStyle === 'box') {
+                    const box = document.createElement('div');
+                    box.style.width = `${parseInt(currentSize) + 6}px`;
+                    box.style.height = `${parseInt(currentSize) + 6}px`;
+                    box.style.border = `${currentThickness}px solid ${currentColor}`;
+                    box.style.boxShadow = `0 0 8px ${currentColor}`;
+                    container.appendChild(box);
+                }
+            }
+
+            // Slider Listeners
+            chSizeSlider.addEventListener('input', (e) => {
+                currentSize = e.target.value;
+                chSizeVal.textContent = `${currentSize}px`;
+                renderCrosshair(modalCrosshairPreview);
+            });
+            chThicknessSlider.addEventListener('input', (e) => {
+                currentThickness = e.target.value;
+                chThicknessVal.textContent = `${currentThickness}px`;
+                renderCrosshair(modalCrosshairPreview);
+            });
+            chGapSlider.addEventListener('input', (e) => {
+                currentGap = e.target.value;
+                chGapVal.textContent = `${currentGap}px`;
+                renderCrosshair(modalCrosshairPreview);
+            });
+            chOpacitySlider.addEventListener('input', (e) => {
+                currentOpacity = e.target.value / 100;
+                chOpacityVal.textContent = `${e.target.value}%`;
+                renderCrosshair(modalCrosshairPreview);
+            });
+            chCustomColor.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+                renderCrosshair(modalCrosshairPreview);
+            });
+
+            document.querySelectorAll('.ch-preset').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.ch-preset').forEach(b => {
+                        b.classList.remove('border-cyber-accent', 'text-white');
+                        b.classList.add('border-cyber-border', 'text-gray-400');
+                    });
+                    btn.classList.remove('border-cyber-border', 'text-gray-400');
+                    btn.classList.add('border-cyber-accent', 'text-white');
+                    currentStyle = btn.getAttribute('data-style');
+                    renderCrosshair(modalCrosshairPreview);
+                });
+            });
+
+            document.querySelectorAll('.ch-color').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.ch-color').forEach(c => c.classList.remove('ring-2', 'ring-white'));
+                    btn.classList.add('ring-2', 'ring-white');
+                    currentColor = btn.getAttribute('data-color');
+                    chCustomColor.value = currentColor;
+                    renderCrosshair(modalCrosshairPreview);
+                });
+            });
+
+            applyCrosshairBtn.addEventListener('click', () => {
+                renderCrosshair(crosshairGraphic);
+                showToast('Crosshair Applied to Canvas!');
+            });
+
+            // Recoil Animation Test
+            labPreviewBox.addEventListener('click', () => {
+                if (recoilToggle.checked) {
+                    modalCrosshairPreview.classList.add('recoil-active');
+                    setTimeout(() => modalCrosshairPreview.classList.remove('recoil-active'), 120);
+                }
+            });
+
+            // Initial Render
+            renderCrosshair(modalCrosshairPreview);
+            renderCrosshair(crosshairGraphic);
+
+            // --- PRO NOTES LOCAL STORAGE PERSISTENCE ---
+            const noteSens = document.getElementById('noteSens');
+            const noteDpi = document.getElementById('noteDpi');
+            const edpiVal = document.getElementById('edpiVal');
+            const noteWeapon = document.getElementById('noteWeapon');
+            const noteTactics = document.getElementById('noteTactics');
+            const saveNotesBtn = document.getElementById('saveNotesBtn');
+            const saveStatus = document.getElementById('saveStatus');
+
+            function updateEdpi() {
+                const s = parseFloat(noteSens.value) || 0;
+                const d = parseInt(noteDpi.value) || 0;
+                edpiVal.textContent = `${Math.round(s * d)} eDPI`;
+            }
+
+            noteSens.value = localStorage.getItem('scorki_sens') || '2.4';
+            noteDpi.value = localStorage.getItem('scorki_dpi') || '800';
+            noteWeapon.value = localStorage.getItem('scorki_weapon') || 'Crackshot';
+            noteTactics.value = localStorage.getItem('scorki_tactics') || '';
+            updateEdpi();
+
+            noteSens.addEventListener('input', updateEdpi);
+            noteDpi.addEventListener('input', updateEdpi);
+
+            saveNotesBtn.addEventListener('click', () => {
+                localStorage.setItem('scorki_sens', noteSens.value);
+                localStorage.setItem('scorki_dpi', noteDpi.value);
+                localStorage.setItem('scorki_weapon', noteWeapon.value);
+                localStorage.setItem('scorki_tactics', noteTactics.value);
+
+                saveStatus.classList.remove('opacity-0');
+                setTimeout(() => saveStatus.classList.add('opacity-0'), 2000);
+                showToast('Scorki Config Persisted');
+            });
+
+            // --- SYNTH AMBIENT FOCUS AUDIO ENGINE ---
+            let audioCtx = null;
+            let osc = null;
+            let isPlayingSynth = false;
+
+            synthSoundBtn.addEventListener('click', () => {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                if (!isPlayingSynth) {
+                    osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(110, audioCtx.currentTime); // Low A hum
+                    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    isPlayingSynth = true;
+                    synthSoundBtn.classList.add('border-cyber-accent', 'text-cyber-accent');
+                    showToast('Focus Ambient Audio Enabled');
+                } else {
+                    if (osc) osc.stop();
+                    isPlayingSynth = false;
+                    synthSoundBtn.classList.remove('border-cyber-accent', 'text-cyber-accent');
+                    showToast('Ambient Audio Off');
+                }
+            });
+
+            // --- SNAPSHOT & SHARE ---
+            document.getElementById('takeScreenshotBtn').addEventListener('click', () => {
+                const flash = document.getElementById('screenshotFlash');
+                flash.classList.remove('opacity-0');
+                flash.classList.add('opacity-90');
+                setTimeout(() => {
+                    flash.classList.remove('opacity-90');
+                    flash.classList.add('opacity-0');
+                    showToast('Snapshot Captured!');
+                }, 150);
+            });
+
+            document.getElementById('shareBtn').addEventListener('click', () => {
+                navigator.clipboard.writeText(window.location.href);
+                showToast('Portal Link Copied to Clipboard!');
+            });
+
+            // --- TOAST FUNCTION ---
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toastMsg');
+                toastMsg.textContent = message;
+
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 2200);
+            }
+        });
+    </script>
+</body>
+</html>
